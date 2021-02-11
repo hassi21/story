@@ -9,6 +9,7 @@ const StoryLine = (props) => {
         console.log("StoryLine", k);
         return (
           <Thumbnail
+            id={props.line.id}
             image={k.image}
             index={index}
             length={props.line.storylineitem_set.length}
