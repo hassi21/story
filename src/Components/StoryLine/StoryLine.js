@@ -12,8 +12,7 @@ const StoryLine = (props) => {
             id={props.line.id}
             image={k.image}
             index={index}
-            length={props.line.storylineitem_set.length}
-            line={props.line}
+            // length={props.line.storylineitem_set.length}
             className="thumbnail"
             key={index}
           />

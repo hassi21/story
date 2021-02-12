@@ -1,7 +1,7 @@
 import "./Thumbnail.css";
 import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import actions from "../../store/actions";
 
@@ -13,6 +13,10 @@ const Thumbnail = (props) => {
   const [open, setOpen] = React.useState(false);
   const storyItems = useSelector((state) => state.storyItems);
   const hotSpots = useSelector((state) => state.hotSpots);
+  const [bg, setBg] = useState(props.image);
+  const [index, setIndex] = useState(props.index);
+  const storyLines = useSelector((state) => state.storyLines);
+  const [id, setId] = useState(props.id);
 
   //styles
   const useStyles = makeStyles((theme) => ({
@@ -24,17 +28,30 @@ const Thumbnail = (props) => {
       backgroundColor: "#6d6963",
       border: "2px solid #000",
       boxShadow: theme.shadows[5],
-      // padding: theme.spacing(2, 4, 3),
       alignContent: "center",
       justifyContent: "center",
     },
   }));
-  const [bg, setBg] = useState(props.image);
-  // const [stroyLines,setStoryLines] = useState(props.line);
-  const [index, setIndex] = useState(props.index);
+  //Global vars
+  // let length = length;
+  // let storyLine = props.storyLine;
 
-  let length = props.length;
-  let line = props.line;
+  //Functions
+
+  const storyLineExtractor = (id) => {
+    let storyLine = storyLines.filter((f) => {
+      if (f.id == id) {
+        return f;
+      }
+    });
+
+    storyLine = storyLine[0];
+    return storyLine;
+  };
+  useEffect(() => {}, []);
+  let storyLine = storyLineExtractor(id);
+  let length = storyLine.storylineitem_set.length;
+
   const storyItemExtractor = (id) => {
     let u = storyItems.map((x) => {
       if (x.storyline === id) {
@@ -46,8 +63,6 @@ const Thumbnail = (props) => {
         return i;
       }
     });
-    console.log("U", u);
-
     let hotS = u.map((j) => {
       return j.map((o) => {
         return hotSpots.filter((k) => {
@@ -57,132 +72,165 @@ const Thumbnail = (props) => {
         });
       });
     });
-    
-
-   
-    // hotS =hotS.filter(f=>{
-    //   if(f!==[]&&f!==undefined){
-    //     return f;
-    //   }
-    // });
-    
-    console.log("Jero", hotS);
-  
-    hotS = (hotS.map((j, i) => {
-      console.log("index", index, "i", i,"and",j);
+    hotS = hotS.map((j, i) => {
       if (i == index) {
-        return j.map(l=>{
-          return l.map(t=>{
-          console.log("rawL",t.type);
-        if (t.type === "link") {
-          console.log("ellink",l);
-          
-          return <div
-            className="hotspot"
-            style={{
-
-              fontSize: `${t.font_size}`,
-              textAlign: `${t.text_align}`,
-              top: `${t.position_top}%`,
-              left: `${t.position_left}%`,
-              color: `#${t.text_hex_color}`,
-            }}
-            onClick={hotspotClick}
-          >
-            <a
-              href="https://www.google.com"
-              target="_blank"
-              alt="This is a link"
-            >
-              .
-            </a>
-          </div>;
-        } else if (t.type === "text") {
-          console.log("elltext", l);
-          return (
-            <p
-              style={{
-                position: "absolute",
-                fontSize: `${t.font_size}`,
-                textAlign: `${t.text_align}`,
-                top: `${t.position_top}%`,
-                left: `${t.position_left}%`,
-                color: `#${t.text_hex_color}`,
-              }}
-            >
-              {t.content}
-            </p>
-          );
-        }})
-      })}
-    }));
-    // hotS=hotS.filter(x=>{if(x!==undefined || x!==[]){
-    //   return x;
-    // }});
-    console.log("hotter", hotS);
+        return j.map((l) => {
+          return l.map((t) => {
+            if (t.type === "link") {
+              return (
+                <div
+                  className="hotspot"
+                  style={{
+                    fontSize: `${t.font_size}`,
+                    textAlign: `${t.text_align}`,
+                    top: `${t.position_top}%`,
+                    left: `${t.position_left}%`,
+                    color: `#${t.text_hex_color}`,
+                  }}
+                  onClick={() =>
+                    hotspotInternalClick(t.link_to_story_line_item)
+                  }
+                ></div>
+              );
+            } else if (t.type === "text") {
+              return (
+                <p
+                  style={{
+                    position: "absolute",
+                    fontSize: `${t.font_size}`,
+                    textAlign: `${t.text_align}`,
+                    top: `${t.position_top}%`,
+                    left: `${t.position_left}%`,
+                    color: `#${t.text_hex_color}`,
+                  }}
+                >
+                  {t.content}
+                </p>
+              );
+            } else if (t.type === "web") {
+              return (
+                <div
+                  className="hotspot web"
+                  style={{
+                    fontSize: `${t.font_size}`,
+                    textAlign: `${t.text_align}`,
+                    top: `${t.position_top}%`,
+                    left: `${t.position_left}%`,
+                    color: `#${t.text_hex_color}`,
+                  }}
+                  onClick={hotspotExternalClick}
+                >
+                  <a
+                    href={`${t.external_link}`}
+                    target="_blank"
+                    alt="This is a link"
+                  ></a>
+                </div>
+              );
+            }
+          });
+        });
+      }
+    });
     return hotS;
   };
-  
 
   const handleOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
+    // setIndex("0");
+
+    setBg(props.image);
+    setId(props.id);
+
+    setIndex(0);
+    storyLine = [];
+
     setOpen(false);
   };
+
   const leftButtonClicked = () => {
-    console.log("LIndex", index);
     if (index <= length - 1 && index > 0) {
-      setBg(line.storylineitem_set[index - 1].image);
+      setBg(storyLine.storylineitem_set[index - 1].image);
       setIndex(index - 1);
     }
-    console.log("Left Button Clicked", bg, index);
   };
+
   const rightButtonClicked = () => {
-    console.log("RIndex", index);
     if (index < length - 1) {
-      setBg(line.storylineitem_set[index + 1].image);
+      setBg(storyLine.storylineitem_set[index + 1].image);
       setIndex(index + 1);
     }
-    console.log("Right Button Clicked", bg, index);
   };
-  const hotspotClick = () => {
-    console.log("Hotspot Clicked");
+
+  const hotspotInternalClick = (id) => {
+    setId(id);
+
+    let st = storyLineExtractor(id);
+    storyLine = st;
+
+    setIndex(0);
+
+    setBg(storyLine.storylineitem_set[index - 1].image);
   };
+
+  const hotspotExternalClick = () => {};
+
   const classes = useStyles();
+
   const body = (
     <div className={classes.paper}>
       <div
         className="imageContainer"
         style={{
-          backgroundImage: `url("${bg}")`,
           height: "100%",
           width: "414px",
           backgroundSize: "cover",
           position: "relative",
         }}
       >
+        {" "}
+        {storyLine.storylineitem_set[index].is_video ? (
+          <video
+            style={{
+              height: "100%",
+
+              width: "100%",
+              backgroundSize: "cover",
+              position: "absolute",
+            }}
+            
+            
+            autoPlay 
+            loop
+          >
+            <source src={storyLine.storylineitem_set[index].video} />
+          </video>
+        ) : (
+          <img
+            src={bg}
+            style={{
+              height: "100%",
+              width: "414px",
+              backgroundSize: "cover",
+              position: "absolute",
+            }}
+          ></img>
+        )}
         {index > 0 && (
           <div className="leftButton" onClick={leftButtonClicked}></div>
         )}
-        {index < props.length - 1 && (
+        {index < length - 1 && (
           <div className="rightButton" onClick={rightButtonClicked}></div>
         )}
       </div>
-      <div className="hotspots">
-        {
-          /* <div className="hotspot" onClick={hotspotClick}>
-          <a href="https://www.google.com" target="_blank" alt="This is a link">
-            .
-          </a>
-        </div> */
-          storyItemExtractor(props.id)
-        }
-      </div>
+      <div className="hotspots">{storyItemExtractor(id)}</div>
     </div>
   );
   let BG = props.image;
-  console.log("Background", BG);
+
   return (
     <div
       style={{
