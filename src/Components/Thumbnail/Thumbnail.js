@@ -48,13 +48,16 @@ const Thumbnail = (props) => {
     storyLine = storyLine[0];
     return storyLine;
   };
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setBg(storyLine.storylineitem_set[index].image)
+  }, [index]);
   let storyLine = storyLineExtractor(id);
   let length = storyLine.storylineitem_set.length;
 
   const storyItemExtractor = (id) => {
     let u = storyItems.map((x) => {
       if (x.storyline === id) {
+        console.log("ID", x.storyline, "AND", x.hotspot_set, "Indexx", index);
         return x.hotspot_set;
       }
     });
@@ -140,8 +143,6 @@ const Thumbnail = (props) => {
   };
 
   const handleClose = () => {
-    // setIndex("0");
-
     setBg(props.image);
     setId(props.id);
 
@@ -153,15 +154,16 @@ const Thumbnail = (props) => {
 
   const leftButtonClicked = () => {
     if (index <= length - 1 && index > 0) {
-      setBg(storyLine.storylineitem_set[index - 1].image);
       setIndex(index - 1);
     }
   };
 
   const rightButtonClicked = () => {
+    console.log("IIIndex", index);
     if (index < length - 1) {
-      setBg(storyLine.storylineitem_set[index + 1].image);
+      console.log("YindexBFRBC", index);
       setIndex(index + 1);
+      console.log("YindexAFRBC", index);
     }
   };
 
@@ -170,10 +172,9 @@ const Thumbnail = (props) => {
 
     let st = storyLineExtractor(id);
     storyLine = st;
-
     setIndex(0);
+      
 
-    setBg(storyLine.storylineitem_set[index - 1].image);
   };
 
   const hotspotExternalClick = () => {};
@@ -201,9 +202,7 @@ const Thumbnail = (props) => {
               backgroundSize: "cover",
               position: "absolute",
             }}
-            
-            
-            autoPlay 
+            autoPlay
             loop
           >
             <source src={storyLine.storylineitem_set[index].video} />
