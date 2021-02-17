@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import actions from "../../store/actions";
+import { useColor } from "color-thief-react";
 
 const Thumbnail = (props) => {
   //Dispatch variable
@@ -46,18 +47,26 @@ const Thumbnail = (props) => {
     });
 
     storyLine = storyLine[0];
+    console.log("okay", storyLine, "ID", id);
     return storyLine;
   };
   useEffect(() => {
-    setBg(storyLine.storylineitem_set[index].image)
+    setBg(storyLine.storylineitem_set[index].image);
   }, [index]);
   let storyLine = storyLineExtractor(id);
   let length = storyLine.storylineitem_set.length;
 
+  const storyItemSpec = (id) => {
+    let u = storyItems.filter((x) => {
+      if (x.id === id) {
+        return x;
+      }
+    });
+    return u;
+  };
   const storyItemExtractor = (id) => {
     let u = storyItems.map((x) => {
       if (x.storyline === id) {
-        console.log("ID", x.storyline, "AND", x.hotspot_set, "Indexx", index);
         return x.hotspot_set;
       }
     });
@@ -146,7 +155,7 @@ const Thumbnail = (props) => {
     setBg(props.image);
     setId(props.id);
 
-    setIndex(0);
+    setIndex(props.index);
     storyLine = [];
 
     setOpen(false);
@@ -159,75 +168,84 @@ const Thumbnail = (props) => {
   };
 
   const rightButtonClicked = () => {
-    console.log("IIIndex", index);
     if (index < length - 1) {
-      console.log("YindexBFRBC", index);
       setIndex(index + 1);
-      console.log("YindexAFRBC", index);
     }
   };
 
   const hotspotInternalClick = (id) => {
-    setId(id);
-
-    let st = storyLineExtractor(id);
+    let item = storyItemSpec(id);
+    item = item[0];
+    let st = storyLineExtractor(item.storyline);
     storyLine = st;
-    setIndex(0);
-      
-
+    setId(storyLine.id);
+    setIndex(item.order - 1);
   };
 
   const hotspotExternalClick = () => {};
 
   const classes = useStyles();
 
-  const body = (
-    <div className={classes.paper}>
-      <div
-        className="imageContainer"
-        style={{
-          height: "100%",
-          width: "414px",
-          backgroundSize: "cover",
-          position: "relative",
-        }}
-      >
-        {" "}
-        {storyLine.storylineitem_set[index].is_video ? (
-          <video
-            style={{
-              height: "100%",
-
-              width: "100%",
-              backgroundSize: "cover",
-              position: "absolute",
-            }}
-            autoPlay
-            loop
-          >
-            <source src={storyLine.storylineitem_set[index].video} />
-          </video>
-        ) : (
-          <img
-            src={bg}
-            style={{
-              height: "100%",
-              width: "414px",
-              backgroundSize: "cover",
-              position: "absolute",
-            }}
-          ></img>
-        )}
-        {index > 0 && (
-          <div className="leftButton" onClick={leftButtonClicked}></div>
-        )}
-        {index < length - 1 && (
-          <div className="rightButton" onClick={rightButtonClicked}></div>
-        )}
-      </div>
-      <div className="hotspots">{storyItemExtractor(id)}</div>
-    </div>
+  const {
+    data,
+    loading,
+    error,
+  } = useColor(
+    "https://stories.narraflix.com/uploads/narraflix/2021/1/14/0e9d813ca836176bfb1277d2063cf55e3f91ef3751e8f2891d62f2b09f68bb1b.jpg",
+    "hex",
+    { crossOrigin: "Anonymous", quality: "100" }
   );
+
+  const body =
+    storyLine !== undefined ? (
+      <div className={classes.paper}>
+        <div
+          className="imageContainer"
+          style={{
+            height: "100%",
+            width: "414px",
+            backgroundSize: "cover",
+            position: "relative",
+          }}
+        >
+          {" "}
+          {storyLine.storylineitem_set[index].is_video ? (
+            <video
+              style={{
+                height: "100%",
+
+                width: "100%",
+                backgroundSize: "cover",
+                position: "absolute",
+              }}
+              autoPlay
+              loop
+            >
+              <source src={storyLine.storylineitem_set[index].video} />
+            </video>
+          ) : (
+            <img
+              src={bg}
+              style={{
+                height: "100%",
+                width: "414px",
+                backgroundSize: "cover",
+                position: "absolute",
+              }}
+            ></img>
+          )}
+          {index > 0 && (
+            <div className="leftButton" onClick={leftButtonClicked}></div>
+          )}
+          {index < length - 1 && (
+            <div className="rightButton" onClick={rightButtonClicked}></div>
+          )}
+        </div>
+        <div className="hotspots">{storyItemExtractor(id)}</div>
+      </div>
+    ) : (
+      ""
+    );
   let BG = props.image;
 
   return (
