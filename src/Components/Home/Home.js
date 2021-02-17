@@ -1,9 +1,11 @@
 import View from "../View/View";
-import StoryLine from "../StoryLine/StoryLine";
+// import StoryLine from "../StoryLine/StoryLine";
 import actions from "../../store/actions";
+import React, { Suspense } from "react";
 import "./Home.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+const StoryLine = React.lazy(() => import("../StoryLine/StoryLine"));
 const Home = () => {
   //Dispatch variable
   const dispatch = useDispatch();
@@ -19,13 +21,14 @@ const Home = () => {
   console.log("Hello", data);
 
   return (
+    
     <div className="homeContainer">
-   
+    <Suspense fallback={<div>Loading</div>}>  
       {data !== undefined &&
         data.map((x) => {
           return <StoryLine className="storyLine" line={x} />;
         })}
-      
+        </Suspense>
     </div>
   );
 };

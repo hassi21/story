@@ -33,9 +33,7 @@ const Thumbnail = (props) => {
       justifyContent: "center",
     },
   }));
-  //Global vars
-  // let length = length;
-  // let storyLine = props.storyLine;
+ 
 
   //Functions
 
@@ -47,7 +45,6 @@ const Thumbnail = (props) => {
     });
 
     storyLine = storyLine[0];
-    console.log("okay", storyLine, "ID", id);
     return storyLine;
   };
   useEffect(() => {
@@ -186,15 +183,15 @@ const Thumbnail = (props) => {
 
   const classes = useStyles();
 
-  const {
-    data,
-    loading,
-    error,
-  } = useColor(
-    "https://stories.narraflix.com/uploads/narraflix/2021/1/14/0e9d813ca836176bfb1277d2063cf55e3f91ef3751e8f2891d62f2b09f68bb1b.jpg",
-    "hex",
-    { crossOrigin: "Anonymous", quality: "100" }
-  );
+  // const {
+  //   data,
+  //   loading,
+  //   error,
+  // } = useColor(
+  //   storyLine.storylineitem_set[index].image,
+  //   "hex",
+  //   { crossOrigin: "Anonymous", quality: "100" }
+  // );
 
   const body =
     storyLine !== undefined ? (
@@ -225,6 +222,7 @@ const Thumbnail = (props) => {
             </video>
           ) : (
             <img
+              id="image"
               src={bg}
               style={{
                 height: "100%",
