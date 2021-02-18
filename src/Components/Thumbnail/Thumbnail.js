@@ -18,6 +18,11 @@ const Thumbnail = (props) => {
   const [index, setIndex] = useState(props.index);
   const storyLines = useSelector((state) => state.storyLines);
   const [id, setId] = useState(props.id);
+  const { data, loading, error } = useColor("/cat.jpg", "hex", { crossOrigin:"Anonymous", quality:100})
+  /*The useColor statement above uses a propositional image stored in local host.
+  It is done to byPass the CORS error. Once the application is deployed on server,
+   the address "/cat,jpg" will have to be replaced with storyLine.storylineitem_set[index].image.
+   Once done this will change the color of background based on the image being viewed*/ 
 
   //styles
   const useStyles = makeStyles((theme) => ({
@@ -26,7 +31,7 @@ const Thumbnail = (props) => {
       position: "absolute",
       width: "100%",
       height: "100%",
-      backgroundColor: "#6d6963",
+      backgroundColor: data,
       border: "2px solid #000",
       boxShadow: theme.shadows[5],
       alignContent: "center",
