@@ -155,7 +155,7 @@ const Thumbnail = (props) => {
   };
 
   const handleClose = () => {
-    console.log("closedYara");
+    
     setBg(props.image);
     setId(props.id);
 
@@ -190,15 +190,7 @@ const Thumbnail = (props) => {
 
   const classes = useStyles();
 
-  // const {
-  //   data,
-  //   loading,
-  //   error,
-  // } = useColor(
-  //   storyLine.storylineitem_set[index].image,
-  //   "hex",
-  //   { crossOrigin: "Anonymous", quality: "100" }
-  // );
+ 
 
   const body =
     storyLine !== undefined ? (

@@ -11,24 +11,21 @@ const Home = () => {
   const dispatch = useDispatch();
   //Hooks
   useEffect(() => {
-    console.log("is Fetching");
     dispatch(actions.fetchStoryLines());
     dispatch(actions.fetchHotSpots());
     dispatch(actions.fetchStoryItems());
   }, []);
   //state
   const data = useSelector((state) => state.storyLines);
-  console.log("Hello", data);
 
   return (
-    
     <div className="homeContainer">
-    <Suspense fallback={<div>Loading</div>}>  
-      {data !== undefined &&
-        data.map((x) => {
-          return <StoryLine className="storyLine" line={x} />;
-        })}
-        </Suspense>
+      <Suspense fallback={<div>Loading</div>}>
+        {data !== undefined &&
+          data.map((x) => {
+            return <StoryLine className="storyLine" line={x} />;
+          })}
+      </Suspense>
     </div>
   );
 };

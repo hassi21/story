@@ -2,7 +2,6 @@ import constants from "./constants";
 import services from "../services";
 
 const fetchStoryLines = () => {
-  console.log("Fetch Action");
   return (dispatch) => {
     try {
       const response = services.fetchStoryLines();
@@ -10,13 +9,10 @@ const fetchStoryLines = () => {
         type: constants.FETCH_STORYLINES,
         payload: { storyLines: response },
       });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 };
 const fetchHotSpots = () => {
-  console.log("Fetch Action");
   return (dispatch) => {
     try {
       const response = services.fetchHotSpots();
@@ -30,7 +26,6 @@ const fetchHotSpots = () => {
   };
 };
 const fetchStoryItems = () => {
-  console.log("Fetch Action");
   return (dispatch) => {
     try {
       const response = services.fetchStoryItems();
