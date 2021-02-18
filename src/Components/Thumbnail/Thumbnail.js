@@ -18,7 +18,7 @@ const Thumbnail = (props) => {
   const [index, setIndex] = useState(props.index);
   const storyLines = useSelector((state) => state.storyLines);
   const [id, setId] = useState(props.id);
-  const { data, loading, error } = useColor("/cat.jpg", "hex", { crossOrigin:"Anonymous", quality:100})
+  const { data, loading, error } = useColor("/mountains.jpg", "hex", { crossOrigin:"Anonymous", quality:1000000000})
   /*The useColor statement above uses a propositional image stored in local host.
   It is done to byPass the CORS error. Once the application is deployed on server,
    the address "/cat,jpg" will have to be replaced with storyLine.storylineitem_set[index].image.
@@ -31,7 +31,7 @@ const Thumbnail = (props) => {
       position: "absolute",
       width: "100%",
       height: "100%",
-      backgroundColor: data,
+      backgroundColor: data===null?"#000":data,
       border: "2px solid #000",
       boxShadow: theme.shadows[5],
       alignContent: "center",
@@ -150,10 +150,12 @@ const Thumbnail = (props) => {
   };
 
   const handleOpen = () => {
+    
     setOpen(true);
   };
 
   const handleClose = () => {
+    console.log("closedYara");
     setBg(props.image);
     setId(props.id);
 
@@ -201,6 +203,7 @@ const Thumbnail = (props) => {
   const body =
     storyLine !== undefined ? (
       <div className={classes.paper}>
+        <div onClick={handleClose} className="cross">X</div>
         <div
           className="imageContainer"
           style={{
