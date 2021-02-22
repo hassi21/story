@@ -18,6 +18,18 @@ const Thumbnail = (props) => {
   const [index, setIndex] = useState(props.index);
   const storyLines = useSelector((state) => state.storyLines);
   const [id, setId] = useState(props.id);
+  const [width, setWidth] = useState(window.innerWidth);
+  function handleWindowSizeChange() {
+    setWidth(window.innerWidth);
+  }
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowSizeChange);
+    return () => {
+      window.removeEventListener("resize", handleWindowSizeChange);
+    };
+  }, []);
+  
+  let isMobile = width <= 444;
   const { data, loading, error } = useColor("/mountains.jpg", "hex", {
     crossOrigin: "Anonymous",
     quality: 10000000000000000000000,
@@ -34,7 +46,7 @@ const Thumbnail = (props) => {
       position: "absolute",
       width: "100%",
       height: "100%",
-      backgroundColor: data === null ? "#000" : data,
+      backgroundColor: isMobile===false?data === null ? "#000" : data:"black",
       boxShadow: theme.shadows[5],
       alignContent: "center",
       justifyContent: "center",
@@ -190,39 +202,37 @@ const Thumbnail = (props) => {
 
   const body = (
     <div className={classes.paper}>
-      <h1 onClick={handleClose} className="cross">
-          X
-        </h1>
-        <div className="imageContainer">
-          {" "}
-          {storyLine.storylineitem_set[index].is_video ? (
-            <video
-              style={{
-                height: "100%",
+      <p onClick={handleClose} className="cross">
+        X
+      </p>
+      <div className="imageContainer">
+        {" "}
+        {storyLine.storylineitem_set[index].is_video ? (
+          <video
+            style={{
+              height: "100%",
 
-                width: "100%",
-                backgroundSize: "cover",
-                position: "absolute",
-              }}
-              autoPlay
-              loop
-            >
-              <source src={storyLine.storylineitem_set[index].video} />
-            </video>
-          ) : (
-            <img id="image" src={bg}></img>
-          )}
-          {index > 0 && (
-            <div className="leftButton" onClick={leftButtonClicked}></div>
-          )}
-          {index < length - 1 && (
-            <div className="rightButton" onClick={rightButtonClicked}></div>
-          )}
-          {index == length - 1 && (
-            <div className="lastStoryText">Last Story</div>
-          )}
-        </div>
+              width: "100%",
+              backgroundSize: "cover",
+              position: "absolute",
+            }}
+            autoPlay
+            loop
+          >
+            <source src={storyLine.storylineitem_set[index].video} />
+          </video>
+        ) : (
+          <img id="image" src={bg}></img>
+        )}
+        {index > 0 && (
+          <div className="leftButton" onClick={leftButtonClicked}></div>
+        )}
+        {index < length - 1 && (
+          <div className="rightButton" onClick={rightButtonClicked}></div>
+        )}
+        {index == length - 1 && <div className="lastStoryText">Last Story</div>}
         <div className="hotspots">{storyItemExtractor(id)}</div>
+      </div>
     </div>
   );
 
