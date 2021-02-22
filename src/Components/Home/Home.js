@@ -22,8 +22,8 @@ const Home = () => {
     <div className="homeContainer">
       <Suspense fallback={<div>Loading</div>}>
         {data !== undefined &&
-          data.map((x) => {
-            return <StoryLine className="storyLine" line={x} />;
+          data.map((storyLine) => {
+            return <StoryLine className="storyLine" line={storyLine} />;
           })}
       </Suspense>
     </div>
